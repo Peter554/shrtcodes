@@ -1,0 +1,13 @@
+language: python
+python:
+  - 3.6
+before_install:
+  - pip install poetry
+install:
+  - poetry install
+script:
+  - poetry run mypy ./shrtcodes
+  - poetry run black --check .
+  - poetry run flake8
+  - poetry run isort -w 88 -m 3 -tc --check
+  - poetry run pytest -x
