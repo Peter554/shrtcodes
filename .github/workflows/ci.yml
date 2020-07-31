@@ -1,0 +1,17 @@
+name: CI
+on: push
+jobs:
+  check-code:
+    name: Check the code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+      - name: Install poetry
+        run: pip install poetry
+      - name: Install dependencies
+        run: poetry install
+      - name: Check code
+        run: ./dev/pre-commit

@@ -1,6 +1,6 @@
 # shrtcodes
 
-[![Build Status](https://travis-ci.org/Peter554/shrtcodes.svg?branch=master)](https://travis-ci.org/Peter554/shrtcodes)
+![example workflow name](https://github.com/Peter554/shrtcodes/workflows/CI/badge.svg)
 
 `pip install shrtcodes`
 
