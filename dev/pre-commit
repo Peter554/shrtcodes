@@ -1,7 +1,0 @@
-set -e
-
-poetry run mypy ./shrtcodes
-poetry run black --check .
-poetry run flake8
-poetry run isort -w 88 -m 3 -tc --check
-poetry run pytest -x --ff

@@ -1,2 +1,0 @@
-poetry run black .
-poetry run isort -w 88 -m 3 -tc
