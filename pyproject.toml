@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "shrtcodes"
-version = "0.5.3"
+version = "1.0.0"
 description = "Simple shortcodes for Python."
 authors = ["Peter Byfield <byfield554@gmail.com>"]
 license = "MIT"
@@ -9,14 +9,13 @@ homepage = "https://github.com/Peter554/shrtcodes#readme"
 repository = "https://github.com/Peter554/shrtcodes"
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.9"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.4.3"
-mypy = "^0.782"
-black = "^19.10b0"
-flake8 = "^3.8.3"
-isort = "^5.0.4"
+black = "^22.12.0"
+mypy = "^0.991"
+pytest = "^7.2.0"
+
 
 [build-system]
 requires = ["poetry>=0.12"]

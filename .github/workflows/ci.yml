@@ -5,13 +5,15 @@ jobs:
     name: Check the code
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
-          python-version: 3.6
+          python-version: "3.9"
+      - name: Install taskfile
+        run: sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
       - name: Install poetry
-        run: pip install poetry
-      - name: Install dependencies
+        run: curl -sSL https://install.python-poetry.org | python -
+      - name: Install Python dependencies
         run: poetry install
-      - name: Check code
-        run: ./dev/pre-commit
+      - name: Check
+        run: task check
