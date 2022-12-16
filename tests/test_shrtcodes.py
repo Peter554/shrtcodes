@@ -6,128 +6,116 @@ from shrtcodes import (
 )
 
 
-def test_process_1():
-    in_text = """
-foo bar baz
+def test_kwargs():
+    text = """
+{% echo Dog Cat %}
+{% echo first=Dog last=Cat %}
+{% echo first=Dog last="Kitty Cat" %}
+{% echo last=Dog first=Cat %}
+{% echo Dog %}
+{% echo first=Dog %}
+{% echo last=Dog %}
+"""
 
-{% hello %}
-\{% hello %}
+    shortcodes = Shrtcodes()
 
-{% link google.com Google %}
-{% link text="Click me to visit Google" url=google.com %}
+    @shortcodes.register_inline("echo")
+    def handle_echo(first="!!!", last="..."):
+        return first + " " + last
 
-{% double %}
-Please please...
-...double me!
-{% / %}
+    assert (
+        shortcodes.process_text(text)
+        == """
+Dog Cat
+Dog Cat
+Dog Kitty Cat
+Cat Dog
+Dog ...
+Dog ...
+!!! Dog
+"""
+    )
+
+
+def test_quoting():
+    text = """
+{% echo "Dog Cat" %}
+{% echo 'Dog Cat' %}
+{% echo 'Dog " Cat' %}
+"""
+
+    shortcodes = Shrtcodes()
+
+    @shortcodes.register_inline("echo")
+    def handle_echo(s):
+        return s
+
+    assert (
+        shortcodes.process_text(text)
+        == """
+Dog Cat
+Dog Cat
+Dog " Cat
+"""
+    )
+
+
+def test_escaping():
+    text = """
+{% echo Dog %}
+\{% echo Dog %}
+{% echo Dog %}
+"""
+
+    shortcodes = Shrtcodes()
+
+    @shortcodes.register_inline("echo")
+    def handle_echo(s):
+        return s
+
+    assert (
+        shortcodes.process_text(text)
+        == """
+Dog
+{% echo Dog %}
+Dog
+"""
+    )
+
+
+def test_block():
+    text = """
+foo
 
 {% ntimes 3 %}
-Please please...
-...triple me!
+bar
 {% / %}
 
-foo bar baz
+baz
 """
 
-    shrtcodes = Shrtcodes()
+    shortcodes = Shrtcodes()
 
-    @shrtcodes.register_inline("hello")
-    def hello_handler():
-        return "Hello!"
-
-    @shrtcodes.register_inline("link")
-    def link_handler(url, text):
-        return f'<a href="https://{url}">{text}</a>'
-
-    @shrtcodes.register_block("double")
-    def double_handler(block):
-        return block * 2
-
-    @shrtcodes.register_block("ntimes")
-    def ntimes_handler(block, n):
+    @shortcodes.register_block("ntimes")
+    def handle_ntimes(block, n):
         return block * int(n)
 
-    out_text = shrtcodes.process_text(in_text)
-
     assert (
-        out_text
+        shortcodes.process_text(text)
         == """
-foo bar baz
+foo
 
-Hello!
-{% hello %}
+bar
+bar
+bar
 
-<a href="https://google.com">Google</a>
-<a href="https://google.com">Click me to visit Google</a>
-
-Please please...
-...double me!
-Please please...
-...double me!
-
-Please please...
-...triple me!
-Please please...
-...triple me!
-Please please...
-...triple me!
-
-foo bar baz
+baz
 """
     )
 
 
-def test_process_2():
-    in_text = """
-Foo bar baz.
-
-{% img https://images.com/cutedog.jpg "A cute dog!" %}
-
-{% details "Some extra info" %}
-This is some extra info.
-{% / %}
-
-Foo bar baz.
-"""
-
-    shrtcodes = Shrtcodes()
-
-    @shrtcodes.register_inline("img")
-    def img_handler(src, alt):
-        return f'<img src="{src}" alt="{alt}"/>'
-
-    @shrtcodes.register_block("details")
-    def details_handler(block, summary):
-        return f"""<details>
-<summary>
-{summary}
-</summary>
-{block}</details>
-"""
-
-    out_text = shrtcodes.process_text(in_text)
-
-    assert (
-        out_text
-        == """
-Foo bar baz.
-
-<img src="https://images.com/cutedog.jpg" alt="A cute dog!"/>
-
-<details>
-<summary>
-Some extra info
-</summary>
-This is some extra info.
-</details>
-
-Foo bar baz.
-"""
-    )
-
-
-def test_nested():
-    in_text = """
+def test_nesting():
+    text = """
 {% double %}
 {% link google.com Google %}
 {% double %}
@@ -137,20 +125,18 @@ Bye!
 {% / %}
 """
 
-    shrtcodes = Shrtcodes()
+    shortcodes = Shrtcodes()
 
-    @shrtcodes.register_inline("link")
+    @shortcodes.register_inline("link")
     def link_handler(url, text):
         return f'<a href="https://{url}">{text}</a>'
 
-    @shrtcodes.register_block("double")
+    @shortcodes.register_block("double")
     def double_handler(block):
         return block * 2
 
-    out_text = shrtcodes.process_text(in_text)
-
     assert (
-        out_text
+        shortcodes.process_text(text)
         == """
 <a href="https://google.com">Google</a>
 Hello!

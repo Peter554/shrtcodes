@@ -18,3 +18,11 @@ tasks:
   fmt:
     cmds:
       - poetry run black .
+
+  create-readme:
+    cmds:
+      - poetry run python create_readme.py README.template.md > README.md
+
+  check-readme:
+    cmds:
+      - poetry run python create_readme.py README.template.md --check_file README.md

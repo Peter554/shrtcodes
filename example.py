@@ -1,31 +1,24 @@
 from shrtcodes import Shrtcodes
 
-in_text = """
-Hello!
-
-{% img http://cutedogs.com/dog123.jpg "A very cute dog" %}
-
-Foo bar baz...
-
-{% repeat 3 %}
-Woop
-{% / %}
-
-Bye!
-""".strip()
 
 shortcodes = Shrtcodes()
 
 
+# {% img src alt %} will create an image.
 @shortcodes.register_inline("img")
 def handle_img(src, alt):
     return f'<img src="{src}" alt="{alt}"/>'
 
 
+# {% repeat n %}...{% / %} will repeat a block n times.
 @shortcodes.register_block("repeat")
 def handle_repeat(block, n):
     return block * int(n)
 
 
+# we can call process_text to get the final text.
+in_text = "..."
 out_text = shortcodes.process_text(in_text)
-print(out_text, end="")
+
+# or, we can create a CLI.
+shortcodes.create_cli()

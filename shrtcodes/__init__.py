@@ -1,5 +1,6 @@
 import shlex
 import re
+import argparse
 from typing import Callable
 
 
@@ -30,6 +31,23 @@ class Shrtcodes:
 
         return decorator
 
+    def create_cli(self):
+        arg_parser = argparse.ArgumentParser()
+        arg_parser.add_argument("in_file", help="File to be processed")
+        arg_parser.add_argument(
+            "--check_file",
+            help="Checks the output against this file and errors if there is a diff",
+        )
+        args = arg_parser.parse_args()
+        with open(args.in_file) as f:
+            if args.check_file:
+                processed_text = self.process_text(f.read())
+                with open(args.check_file) as f2:
+                    if f2.read() != processed_text:
+                        raise exit(1)
+            else:
+                print(self.process_text(f.read()), end="")
+
     def process_text(self, text: str) -> str:
         text_stack = [""]
         shortcode_stack: list[tuple[str, list, dict]] = []
@@ -41,16 +59,15 @@ class Shrtcodes:
             elif line.strip() == "{% / %}":
                 name, args, kwargs = shortcode_stack.pop()
                 t = self._block_handlers[name](text_stack.pop(), *args, **kwargs)
-                text_stack[-1] += t
+                text_stack[-1] += self._ensure_newline_ending(t)
             else:
                 name, args, kwargs = self._parse_shortcode(line)
                 if name in self._block_handlers:
                     shortcode_stack.append((name, args, kwargs))
                     text_stack.append("")
                 elif name in self._inline_handlers:
-                    text_stack[-1] += (
-                        self._inline_handlers[name](*args, **kwargs) + "\n"
-                    )
+                    t = self._inline_handlers[name](*args, **kwargs)
+                    text_stack[-1] += self._ensure_newline_ending(t)
                 else:
                     raise UnrecognizedShortcode(name)
         return "".join(text_stack)
@@ -82,3 +99,10 @@ class Shrtcodes:
             else:
                 args.append(arg)
         return args, kwargs
+
+    @classmethod
+    def _ensure_newline_ending(cls, s: str) -> str:
+        if s.endswith("\n"):
+            return s
+        else:
+            return s + "\n"

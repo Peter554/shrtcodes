@@ -5,21 +5,27 @@ from shrtcodes import Shrtcodes
 shortcodes = Shrtcodes()
 
 
-@shortcodes.register_inline("cat")
-def handle_cat(file_path):
+@shortcodes.register_inline("embed_file")
+def handle_embed_file(file_path, syntax="", comment_char="#"):
     with open(file_path) as f:
-        return f.read()
+        return f"""```{syntax}
+{comment_char} {file_path}
+{f.read()}
+```
+"""
 
 
 @shortcodes.register_inline("execute_python")
-def handle_execute_python(file_path):
-    cmd = subprocess.run(["python", file_path], capture_output=True)
-    return cmd.stdout.decode()
+def handle_execute_python(*python_args):
+    cmd = subprocess.run(["python", *python_args], capture_output=True)
+    return f"""```
+python {' '.join(python_args)}
+```
+
+```
+{cmd.stdout.decode()}
+```
+"""
 
 
-with open("README.template.md") as f:
-    in_text = f.read()
-
-out_text = shortcodes.process_text(in_text)
-with open("README.md", "w") as f:
-    f.write(out_text)
+shortcodes.create_cli()

@@ -4,16 +4,25 @@
 
 `pip install shrtcodes`
 
-Simple shortcodes for Python.
+Shortcodes for Python.
 
 ## Example:
 
-```py
-{% cat example.py %}
-```
+A toy example.
 
-Output:
+Define our shortcodes:
 
-```
-{% execute_python example.py %}
-```
+{% embed_file example.py syntax=py %}
+
+{% execute_python example.py --help %}
+
+Write some text:
+
+{% embed_file example.txt %}
+
+Process the text:
+
+{% execute_python example.py example.txt %}
+
+A more useful example would be the generation of this README itself.
+See [`create_readme.py`](/create_readme.py) and [`README.template.md`](/README.template.md).

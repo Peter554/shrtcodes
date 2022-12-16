@@ -1,0 +1,11 @@
+Hello!
+
+{% img http://cutedogs.com/dog123.jpg "A very cute dog" %}
+
+Foo bar baz...
+
+{% repeat 3 %}
+Woop
+{% / %}
+
+Bye!
