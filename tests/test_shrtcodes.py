@@ -6,7 +6,7 @@ from shrtcodes import (
 )
 
 
-def test_kwargs():
+def test_kwargs() -> None:
     text = """
 {% echo Dog Cat %}
 {% echo first=Dog last=Cat %}
@@ -20,7 +20,7 @@ def test_kwargs():
     shortcodes = Shrtcodes()
 
     @shortcodes.register_inline("echo")
-    def handle_echo(first="!!!", last="..."):
+    def handle_echo(first: str = "!!!", last: str = "...") -> str:
         return first + " " + last
 
     assert (
@@ -37,7 +37,7 @@ Dog ...
     )
 
 
-def test_quoting():
+def test_quoting() -> None:
     text = """
 {% echo "Dog Cat" %}
 {% echo 'Dog Cat' %}
@@ -47,7 +47,7 @@ def test_quoting():
     shortcodes = Shrtcodes()
 
     @shortcodes.register_inline("echo")
-    def handle_echo(s):
+    def handle_echo(s: str) -> str:
         return s
 
     assert (
@@ -60,17 +60,17 @@ Dog " Cat
     )
 
 
-def test_escaping():
+def test_escaping() -> None:
     text = """
 {% echo Dog %}
-\{% echo Dog %}
+\\{% echo Dog %}
 {% echo Dog %}
 """
 
     shortcodes = Shrtcodes()
 
     @shortcodes.register_inline("echo")
-    def handle_echo(s):
+    def handle_echo(s: str) -> str:
         return s
 
     assert (
@@ -83,7 +83,7 @@ Dog
     )
 
 
-def test_block():
+def test_block() -> None:
     text = """
 foo
 
@@ -97,7 +97,7 @@ baz
     shortcodes = Shrtcodes()
 
     @shortcodes.register_block("ntimes")
-    def handle_ntimes(block, n):
+    def handle_ntimes(block: str, n: str) -> str:
         return block * int(n)
 
     assert (
@@ -114,7 +114,7 @@ baz
     )
 
 
-def test_nesting():
+def test_nesting() -> None:
     text = """
 {% double %}
 {% link google.com Google %}
@@ -128,11 +128,11 @@ Bye!
     shortcodes = Shrtcodes()
 
     @shortcodes.register_inline("link")
-    def link_handler(url, text):
+    def link_handler(url: str, text: str) -> str:
         return f'<a href="https://{url}">{text}</a>'
 
     @shortcodes.register_block("double")
-    def double_handler(block):
+    def double_handler(block: str) -> str:
         return block * 2
 
     assert (
@@ -150,7 +150,7 @@ Bye!
     )
 
 
-def test_process_raises_on_unrecognized_shortcode():
+def test_process_raises_on_unrecognized_shortcode() -> None:
     with pytest.raises(UnrecognizedShortcode):
         Shrtcodes().process_text(
             """

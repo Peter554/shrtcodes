@@ -13,25 +13,29 @@ class UnrecognizedShortcode(ShrtcodesError):
 
 
 class Shrtcodes:
-    def __init__(self):
+    def __init__(self) -> None:
         self._inline_handlers: dict[str, Callable[..., str]] = {}
         self._block_handlers: dict[str, Callable[..., str]] = {}
 
-    def register_inline(self, name: str):
-        def decorator(handler: Callable[..., str]):
+    def register_inline(
+        self, name: str
+    ) -> Callable[[Callable[..., str]], Callable[..., str]]:
+        def decorator(handler: Callable[..., str]) -> Callable[..., str]:
             self._inline_handlers = {**self._inline_handlers, name: handler}
             return handler
 
         return decorator
 
-    def register_block(self, name: str):
-        def decorator(handler: Callable[..., str]):
+    def register_block(
+        self, name: str
+    ) -> Callable[[Callable[..., str]], Callable[..., str]]:
+        def decorator(handler: Callable[..., str]) -> Callable[..., str]:
             self._block_handlers = {**self._block_handlers, name: handler}
             return handler
 
         return decorator
 
-    def create_cli(self):
+    def create_cli(self) -> None:
         arg_parser = argparse.ArgumentParser()
         arg_parser.add_argument("in_file", help="File to be processed")
         arg_parser.add_argument(
@@ -50,7 +54,7 @@ class Shrtcodes:
 
     def process_text(self, text: str) -> str:
         text_stack = [""]
-        shortcode_stack: list[tuple[str, list, dict]] = []
+        shortcode_stack: list[tuple[str, list[str], dict[str, str]]] = []
         for line in text.splitlines(keepends=True):
             if self._is_escaped_shortcode(line):
                 text_stack[-1] += line[1:]
@@ -74,21 +78,23 @@ class Shrtcodes:
 
     @classmethod
     def _is_escaped_shortcode(cls, line: str) -> bool:
-        return line.startswith("\{% ") and line.strip().endswith(" %}")
+        return line.startswith("\\{% ") and line.strip().endswith(" %}")
 
     @classmethod
     def _is_shortcode(cls, line: str) -> bool:
         return line.startswith("{% ") and line.strip().endswith(" %}")
 
     @classmethod
-    def _parse_shortcode(cls, line: str) -> tuple[str, list, dict]:
+    def _parse_shortcode(cls, line: str) -> tuple[str, list[str], dict[str, str]]:
         line = line.strip()[3:-3]
         name = line.split()[0]
         args, kwargs = cls._parse_shortcode_arguments(line[len(name) :])
         return name, args, kwargs
 
     @classmethod
-    def _parse_shortcode_arguments(cls, raw_args: str) -> tuple[list, dict]:
+    def _parse_shortcode_arguments(
+        cls, raw_args: str
+    ) -> tuple[list[str], dict[str, str]]:
         raw_args = raw_args.strip()
         all_args = shlex.split(raw_args)
         args = []

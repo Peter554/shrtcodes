@@ -22,13 +22,13 @@ shortcodes = Shrtcodes()
 
 # {% img src alt %} will create an image.
 @shortcodes.register_inline("img")
-def handle_img(src, alt):
+def handle_img(src: str, alt: str) -> str:
     return f'<img src="{src}" alt="{alt}"/>'
 
 
 # {% repeat n %}...{% / %} will repeat a block n times.
 @shortcodes.register_block("repeat")
-def handle_repeat(block, n):
+def handle_repeat(block: str, n: str) -> str:
     return block * int(n)
 
 
@@ -97,4 +97,4 @@ Bye!
 ```
 
 A more useful example would be the generation of this README itself.
-See [`create_readme.py`](/create_readme.py) and [`README.template.md`](/README.template.md).
+See [`create_readme.py`](/.make_readme.py) and [`README.template.md`](/.README.template.md).
