@@ -1,6 +1,8 @@
 import shlex
 import re
 import argparse
+import difflib
+import sys
 from typing import Callable
 
 
@@ -47,7 +49,13 @@ class Shrtcodes:
             if args.check_file:
                 processed_text = self.process_text(f.read())
                 with open(args.check_file) as f2:
-                    if f2.read() != processed_text:
+                    expected_text = f2.read()
+                    if expected_text != processed_text:
+                        for diff_line in difflib.unified_diff(
+                            expected_text.splitlines(keepends=True),
+                            processed_text.splitlines(keepends=True),
+                        ):
+                            print(diff_line, end="", file=sys.stderr)
                         raise exit(1)
             else:
                 print(self.process_text(f.read()), end="")

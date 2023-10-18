@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "shrtcodes"
-version = "1.1.1"
+version = "1.2.0"
 description = "Simple shortcodes for Python."
 authors = ["Peter Byfield <byfield554@gmail.com>"]
 license = "MIT"
