@@ -97,4 +97,4 @@ Bye!
 ```
 
 A more useful example would be the generation of this README itself.
-See [`create_readme.py`](/.make_readme.py) and [`README.template.md`](/.README.template.md).
+See [`make_readme.py`](/make_readme.py) and [`.README.template.md`](/.README.template.md).

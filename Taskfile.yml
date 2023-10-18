@@ -22,8 +22,8 @@ tasks:
 
   make-readme:
     cmds:
-      - poetry run python .make_readme.py .README.template.md > README.md
+      - poetry run python make_readme.py .README.template.md > README.md
 
   check-readme:
     cmds:
-      - poetry run python .make_readme.py .README.template.md --check_file README.md
+      - poetry run python make_readme.py .README.template.md --check_file README.md
